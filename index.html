@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atomic Chess</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Atomic Chess</h1>
+            <div class="game-info">
+                <div class="info-item">
+                    <span class="label">Game State:</span>
+                    <span id="game-state">UNFINISHED</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Current Player:</span>
+                    <span id="current-player">WHITE</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="board-container">
+                <!-- Column labels (top) -->
+                <div class="column-labels top">
+                    <div class="corner"></div>
+                    <div class="label">a</div>
+                    <div class="label">b</div>
+                    <div class="label">c</div>
+                    <div class="label">d</div>
+                    <div class="label">e</div>
+                    <div class="label">f</div>
+                    <div class="label">g</div>
+                    <div class="label">h</div>
+                    <div class="corner"></div>
+                </div>
+
+                <!-- Chess board with row labels -->
+                <div class="board-row">
+                    <div class="row-labels left">
+                        <div class="label">8</div>
+                        <div class="label">7</div>
+                        <div class="label">6</div>
+                        <div class="label">5</div>
+                        <div class="label">4</div>
+                        <div class="label">3</div>
+                        <div class="label">2</div>
+                        <div class="label">1</div>
+                    </div>
+
+                    <div id="chess-board" class="chess-board"></div>
+
+                    <div class="row-labels right">
+                        <div class="label">8</div>
+                        <div class="label">7</div>
+                        <div class="label">6</div>
+                        <div class="label">5</div>
+                        <div class="label">4</div>
+                        <div class="label">3</div>
+                        <div class="label">2</div>
+                        <div class="label">1</div>
+                    </div>
+                </div>
+
+                <!-- Column labels (bottom) -->
+                <div class="column-labels bottom">
+                    <div class="corner"></div>
+                    <div class="label">a</div>
+                    <div class="label">b</div>
+                    <div class="label">c</div>
+                    <div class="label">d</div>
+                    <div class="label">e</div>
+                    <div class="label">f</div>
+                    <div class="label">g</div>
+                    <div class="label">h</div>
+                    <div class="corner"></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="new-game-btn" class="btn btn-success">New Game</button>
+                <button id="rules-btn" class="btn btn-info">Rules</button>
+            </div>
+
+            <div class="status-message" id="status-message"></div>
+        </main>
+
+        <!-- Rules Modal -->
+        <div id="rules-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Atomic Chess Rules</h2>
+                <div class="rules-content">
+                    <h3>Basic Rules:</h3>
+                    <ul>
+                        <li>Atomic chess follows standard chess rules with one major exception: <strong>captures cause explosions!</strong></li>
+                        <li>When a piece captures another piece, both pieces are destroyed along with all pieces in the 8 adjacent squares</li>
+                        <li>Pawns are immune to explosions and survive</li>
+                        <li>Kings cannot capture because they would explode themselves</li>
+                        <li>You win by exploding the opponent's king or by checkmate</li>
+                    </ul>
+                    
+                    <h3>How to Play:</h3>
+                    <ol>
+                        <li>Click on one of your pieces to select it</li>
+                        <li>Click on a destination square to move</li>
+                        <li>Invalid moves will be highlighted with a message</li>
+                        <li>Click the same piece again to deselect it</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="chess-game.js"></script>
+    <script src="chess-gui.js"></script>
+</body>
+</html>
