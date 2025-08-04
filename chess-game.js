@@ -1,6 +1,11 @@
-// Chess piece definitions and game logic
+/**
+ * @class ChessGame
+ * @description Manages the game state, piece movement, and rules of atomic chess.
+ * This class handles the core game logic but does not include GUI or user interactions.
+ */
 class ChessGame {
   constructor() {
+    // piece definitions (numbers used for easier comparison)
     this.EMPTY = 0;
     this.BR = 1; // Black Rook
     this.BH = 2; // Black Knight (Horse)
@@ -15,6 +20,7 @@ class ChessGame {
     this.WK = 50; // White King
     this.WP = 60; // White Pawn
 
+    // unicode symbols for gui
     this.pieceSymbols = {
       0: "", // empty
       1: "♜", // black rook
@@ -34,11 +40,19 @@ class ChessGame {
     this.initializeGame();
   }
 
+  /**
+   * Initializes a new chess game.
+   * Sets the current player to WHITE, game state to UNFINISHED,
+   * and creates a new board with pieces in their starting positions.
+   *
+   * The board is represented as an 8x8 2D array where:
+   * - 0 represents an empty square
+   * - Constants like WP represent pieces
+   */
   initializeGame() {
     this.currentPlayer = "WHITE";
     this.gameState = "UNFINISHED";
 
-    // Initialize board - standard chess starting position
     this.board = [
       [this.BR, this.BH, this.BB, this.BQ, this.BK, this.BB, this.BH, this.BR],
       [this.BP, this.BP, this.BP, this.BP, this.BP, this.BP, this.BP, this.BP],
@@ -51,6 +65,14 @@ class ChessGame {
     ];
   }
 
+  /**
+   * Returns the chess piece at the specified row and column on the board.
+   * If the coordinates are out of bounds (not between 0 and 7), returns null.
+   *
+   * @param {number} row - The row index (0-7) of the board.
+   * @param {number} col - The column index (0-7) of the board.
+   * @returns {(Object|null)} The piece object at the specified position, or null if out of bounds.
+   */
   getPieceAt(row, col) {
     if (row < 0 || row >= 8 || col < 0 || col >= 8) {
       return null;
@@ -58,35 +80,60 @@ class ChessGame {
     return this.board[row][col];
   }
 
+  /**
+   * Sets a chess piece at the specified position on the board.
+   *
+   * @param {number} row - The row index (0-7) where the piece will be placed.
+   * @param {number} col - The column index (0-7) where the piece will be placed.
+   * @param {*} piece - The chess piece to set at the specified position.
+   */
   setPieceAt(row, col, piece) {
     if (row >= 0 && row < 8 && col >= 0 && col < 8) {
       this.board[row][col] = piece;
     }
   }
 
+  /**
+   * Determines if the given piece belongs to the current player.
+   *
+   * @param {number} piece - The numeric representation of a chess piece.
+   * @returns {boolean} True if the piece belongs to the current player, false otherwise.
+   */
   isValidPlayer(piece) {
     if (piece === 0) return false;
 
     if (this.currentPlayer === "WHITE") {
-      return piece >= 10; // White pieces
+      return piece >= 10; // white pieces
     } else {
-      return piece < 10 && piece > 0; // Black pieces
+      return piece < 10 && piece > 0; // black pieces
     }
   }
 
+  /**
+   * Checks if a horizontal or vertical move from the current position to the destination
+   * is blocked by any pieces on the board.
+   *
+   * @param {number} currentCol - The column index of the current position.
+   * @param {number} currentRow - The row index of the current position.
+   * @param {number} destCol - The column index of the destination position.
+   * @param {number} destRow - The row index of the destination position.
+   * @returns {boolean} True if the path is clear, false if blocked by any piece.
+   */
   checkHorizontalVerticalMove(currentCol, currentRow, destCol, destRow) {
-    // Check if there are pieces blocking horizontal/vertical movement
+    // horizontal move
     if (currentRow === destRow) {
-      // Horizontal move
-      let start = Math.min(currentCol, destCol) + 1;
+      // both directions are valid
+      let start = Math.min(currentCol, destCol) + 1; // +1 to skip the current square
       let end = Math.max(currentCol, destCol);
+      // check all squares between current and destination
       for (let col = start; col < end; col++) {
         if (this.board[currentRow][col] !== 0) {
           return false;
         }
       }
-    } else if (currentCol === destCol) {
-      // Vertical move
+    }
+    // vertical move
+    else if (currentCol === destCol) {
       let start = Math.min(currentRow, destRow) + 1;
       let end = Math.max(currentRow, destRow);
       for (let row = start; row < end; row++) {
