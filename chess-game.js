@@ -145,13 +145,26 @@ class ChessGame {
     return true;
   }
 
+  /**
+   * Checks if a diagonal move from the current position to the destination
+   * is blocked by any pieces on the board.
+   *
+   * @param {number} currentCol - The column index of the current position.
+   * @param {number} currentRow - The row index of the current position.
+   * @param {number} destCol - The column index of the destination position.
+   * @param {number} destRow - The row index of the destination position.
+   * @returns {boolean} True if the path is clear, false if blocked by any piece.
+   */
   checkDiagonalMove(currentCol, currentRow, destCol, destRow) {
+    // check whether move is upwards (lower indices) or downwards (higher indices)
     let rowStep = destRow > currentRow ? 1 : -1;
     let colStep = destCol > currentCol ? 1 : -1;
 
+    // calculate the next square in the diagonal direction
     let checkRow = currentRow + rowStep;
     let checkCol = currentCol + colStep;
 
+    // check all squares between current and destination
     while (checkRow !== destRow && checkCol !== destCol) {
       if (this.board[checkRow][checkCol] !== 0) {
         return false;
@@ -162,25 +175,36 @@ class ChessGame {
     return true;
   }
 
-  isValidChessMove(piece, currentCol, currentRow, destCol, destRow) {
+  /**
+   * Determines if a move is valid for a given chess piece according to both standard chess rules
+   * and atomic chess rules.
+   *
+   * @param {number} movingPiece - The piece to move, encoded as an integer.
+   * @param {number} currentCol - The current column of the piece.
+   * @param {number} currentRow - The current row of the piece.
+   * @param {number} destCol - The destination column.
+   * @param {number} destRow - The destination row.
+   * @returns {boolean} True if the move is valid, false otherwise.
+   */
+  isValidChessMove(movingPiece, currentCol, currentRow, destCol, destRow) {
     let rowDistance = Math.abs(currentRow - destRow);
     let colDistance = Math.abs(currentCol - destCol);
 
-    // Can't move off board
+    // can't move off board
     if (destCol < 0 || destCol >= 8 || destRow < 0 || destRow >= 8) {
       return false;
     }
 
-    // Can't capture own piece
+    // can't capture own piece
     let destPiece = this.board[destRow][destCol];
-    if (piece < 10 && destPiece > 0 && destPiece < 10) return false; // Black capturing black
-    if (piece >= 10 && destPiece >= 10) return false; // White capturing white
+    if (movingPiece < 10 && destPiece > 0 && destPiece < 10) return false; // black capturing black
+    if (movingPiece >= 10 && destPiece >= 10) return false; // white capturing white
 
-    // Piece-specific movement rules
-    switch (piece) {
+    // piece-specific movement rules
+    switch (movingPiece) {
+      // rook: horizontal or vertical only
       case this.BR:
       case this.WR:
-        // Rook: horizontal or vertical only
         if (currentRow !== destRow && currentCol !== destCol) return false;
         return this.checkHorizontalVerticalMove(
           currentCol,
@@ -189,23 +213,23 @@ class ChessGame {
           destRow
         );
 
+      // knight: L-shape moves
       case this.BH:
       case this.WH:
-        // Knight: L-shape moves
         return (
           (rowDistance === 1 && colDistance === 2) ||
           (rowDistance === 2 && colDistance === 1)
         );
 
+      // bishop: diagonal only
       case this.BB:
       case this.WB:
-        // Bishop: diagonal only
         if (rowDistance !== colDistance) return false;
         return this.checkDiagonalMove(currentCol, currentRow, destCol, destRow);
 
+      // queen: any direction
       case this.BQ:
       case this.WQ:
-        // Queen: any direction
         if (rowDistance === colDistance) {
           return this.checkDiagonalMove(
             currentCol,
@@ -223,38 +247,28 @@ class ChessGame {
         }
         return false;
 
+      // king: one square in any direction
       case this.BK:
       case this.WK:
-        // King: one square in any direction, but cannot capture (atomic rule)
         if (rowDistance > 1 || colDistance > 1) return false;
-        if (destPiece !== 0) return false; // Kings cannot capture in atomic chess
+        if (destPiece !== 0) return false; // kings cannot capture in atomic chess
         return true;
 
+      // black pawn
       case this.BP:
-        // Black pawn
-        if (currentRow <= destRow) return false; // Can't move backwards
-        if (destPiece === 0 && currentCol !== destCol) return false; // Can't move diagonally without capture
-        if (destPiece !== 0 && currentCol === destCol) return false; // Can't capture forward
+        if (currentRow <= destRow) return false; // can't move backwards or sideways
+        if (destPiece === 0 && currentCol !== destCol) return false; // can't move diagonally without capture
+        if (destPiece !== 0 && currentCol === destCol) return false; // can't capture forward
 
-        // First move: can move 2 squares
+        // first move: can move 2 squares
         if (currentRow === 1) {
-          return (
-            rowDistance <= 2 &&
-            (destPiece === 0
-              ? currentCol === destCol
-              : Math.abs(currentCol - destCol) === 1)
-          );
+          return rowDistance <= 2 && currentCol === destCol;
         }
-        return (
-          rowDistance === 1 &&
-          (destPiece === 0
-            ? currentCol === destCol
-            : Math.abs(currentCol - destCol) === 1)
-        );
+        return rowDistance === 1;
 
+      // white pawn
       case this.WP:
-        // White pawn
-        if (currentRow >= destRow) return false; // Can't move backwards
+        if (currentRow >= destRow) return false; // Can't move backwards or sideways
         if (destPiece === 0 && currentCol !== destCol) return false; // Can't move diagonally without capture
         if (destPiece !== 0 && currentCol === destCol) return false; // Can't capture forward
 
