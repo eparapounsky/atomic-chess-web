@@ -268,38 +268,36 @@ class ChessGame {
 
       // white pawn
       case this.WP:
-        if (currentRow >= destRow) return false; // Can't move backwards or sideways
-        if (destPiece === 0 && currentCol !== destCol) return false; // Can't move diagonally without capture
-        if (destPiece !== 0 && currentCol === destCol) return false; // Can't capture forward
+        if (currentRow >= destRow) return false;
+        if (destPiece === 0 && currentCol !== destCol) return false;
+        if (destPiece !== 0 && currentCol === destCol) return false;
 
-        // First move: can move 2 squares
         if (currentRow === 6) {
-          return (
-            rowDistance <= 2 &&
-            (destPiece === 0
-              ? currentCol === destCol
-              : Math.abs(currentCol - destCol) === 1)
-          );
+          return rowDistance <= 2 && currentCol === destCol;
         }
-        return (
-          rowDistance === 1 &&
-          (destPiece === 0
-            ? currentCol === destCol
-            : Math.abs(currentCol - destCol) === 1)
-        );
+        return rowDistance === 1;
     }
 
     return false;
   }
 
-  makeMove(fromSquare, toSquare) {
-    // Convert chess notation to array indices
-    let fromCol = fromSquare.charCodeAt(0) - "a".charCodeAt(0);
-    let fromRow = 8 - parseInt(fromSquare[1]);
-    let toCol = toSquare.charCodeAt(0) - "a".charCodeAt(0);
-    let toRow = 8 - parseInt(toSquare[1]);
+  /**
+   * Attempts to make a move from one square to another in the atomic chess game.
+   * Handles move validation, captures, atomic explosions, and updates game state.
+   *
+   * @param {string} currentSquare - The starting square in chess notation ("e2").
+   * @param {string} destSquare - The destination square in chess notation ("e4").
+   * @returns {{success: boolean, message: string}} An object, with (1) a boolean indicating whether the move was successful,
+   * and (2) a message describing the result.
+   */
+  makeMove(currentSquare, destSquare) {
+    // convert chess notation to array indices
+    let currentCol = currentSquare.charCodeAt(0) - "a".charCodeAt(0);
+    let currentRow = 8 - parseInt(currentSquare[1]);
+    let destCol = destSquare.charCodeAt(0) - "a".charCodeAt(0);
+    let destRow = 8 - parseInt(destSquare[1]);
 
-    let piece = this.getPieceAt(fromRow, fromCol);
+    let piece = this.getPieceAt(currentRow, currentCol);
 
     if (!this.isValidPlayer(piece)) {
       return {
@@ -308,7 +306,7 @@ class ChessGame {
       };
     }
 
-    if (!this.isValidChessMove(piece, fromCol, fromRow, toCol, toRow)) {
+    if (!this.isValidChessMove(piece, currentCol, currentRow, destCol, destRow)) {
       return {
         success: false,
         message: "Invalid move according to chess rules.",
@@ -320,18 +318,18 @@ class ChessGame {
     }
 
     // Make the move
-    this.setPieceAt(fromRow, fromCol, 0);
-    let capturedPiece = this.getPieceAt(toRow, toCol);
+    this.setPieceAt(currentRow, currentCol, 0);
+    let capturedPiece = this.getPieceAt(destRow, destCol);
 
     if (capturedPiece !== 0) {
       // Atomic explosion!
-      this.setPieceAt(toRow, toCol, 0); // Captured piece explodes
+      this.setPieceAt(destRow, destCol, 0); // Captured piece explodes
 
       // Explode adjacent squares (pawns survive)
       for (let dr = -1; dr <= 1; dr++) {
         for (let dc = -1; dc <= 1; dc++) {
-          let explodeRow = toRow + dr;
-          let explodeCol = toCol + dc;
+          let explodeRow = destRow + dr;
+          let explodeCol = destCol + dc;
           let explodePiece = this.getPieceAt(explodeRow, explodeCol);
 
           if (
@@ -345,7 +343,7 @@ class ChessGame {
       }
     } else {
       // Normal move (no capture)
-      this.setPieceAt(toRow, toCol, piece);
+      this.setPieceAt(destRow, destCol, piece);
     }
 
     this.checkGameEnd();
