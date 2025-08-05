@@ -19,7 +19,7 @@ class ChessGUI {
 
   /**
    * Initializes the chess board by creating and appending square elements to the board container.
-   * Clears any existing squares before rendering a new 8x8 grid.
+   * Clears any existing squares before rendering a new grid.
    * Each square is assigned its row, column, and chess notation as data attributes,
    * and is styled as either light or dark based on its position.
    * Adds a click event listener to each square for handling user interactions.
