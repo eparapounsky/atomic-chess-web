@@ -169,27 +169,28 @@ class ChessGUI {
     this.highlightSelectedSquare(chessNotation);
   }
 
-  attemptMove(fromSquare, toSquare) {
-    console.log(`Attempting move: ${fromSquare} to ${toSquare}`);
-    const result = this.game.makeMove(fromSquare, toSquare);
-    console.log(`Move result:`, result);
+  /**
+   * Attempts to make a move from one square to another on the chess board and updates the UI.
+   * If the move ends the game, displays a game over message.
+   *
+   * @param {string} currentSquare - The starting square of the move.
+   * @param {string} destSquare - The destination square of the move.
+   */
+  attemptMove(currentSquare, destSquare) {
+    const result = this.game.makeMove(currentSquare, destSquare);
 
     if (result.success) {
       this.clearSelection();
       this.updateDisplay();
-      this.showMessage(
-        `Move: ${fromSquare.toUpperCase()} → ${toSquare.toUpperCase()}`,
-        "success"
-      );
 
-      // Check for game end
+      // check for game end
       if (this.game.getGameState() !== "UNFINISHED") {
         setTimeout(() => {
           this.showMessage(
-            `🎉 GAME OVER! Winner: ${this.game.getGameState()} 🎉`,
+            `GAME OVER! WINNER: ${this.game.getGameState()}`,
             "success"
           );
-        }, 1000);
+        }, 3000);
       }
     } else {
       this.showMessage(result.message, "error");
@@ -256,11 +257,11 @@ class ChessGUI {
     this.updateGameInfo();
   }
 
-/**
- * Updates the visual representation of the chess board by iterating over each square,
- * retrieving the piece at each position, and setting the corresponding HTML element's
- * content to display the piece symbol.
- */
+  /**
+   * Updates the visual representation of the chess board by iterating over each square,
+   * retrieving the piece at each position, and setting the corresponding HTML element's
+   * content to display the piece symbol.
+   */
   updateBoard() {
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
@@ -275,9 +276,9 @@ class ChessGUI {
     }
   }
 
-/**
- * Updates the game state and current player.
- */
+  /**
+   * Updates the game state and current player.
+   */
   updateGameInfo() {
     this.gameStateElement.textContent = this.game.getGameState();
     this.currentPlayerElement.textContent = this.game.getCurrentPlayer();
