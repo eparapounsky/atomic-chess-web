@@ -282,12 +282,12 @@ class ChessGame {
   }
 
   /**
-   * Attempts to make a move from one square to another in the atomic chess game.
+   * Attempts to make a move from one square to another.
    * Handles move validation, captures, atomic explosions, and updates game state.
    *
    * @param {string} currentSquare - The starting square in chess notation ("e2").
    * @param {string} destSquare - The destination square in chess notation ("e4").
-   * @returns {{success: boolean, message: string}} An object, with (1) a boolean indicating whether the move was successful,
+   * @returns {{success: boolean, message: string}} An object with (1) a boolean indicating whether the move was successful,
    * and (2) a message describing the result.
    */
   makeMove(currentSquare, destSquare) {
@@ -306,7 +306,9 @@ class ChessGame {
       };
     }
 
-    if (!this.isValidChessMove(piece, currentCol, currentRow, destCol, destRow)) {
+    if (
+      !this.isValidChessMove(piece, currentCol, currentRow, destCol, destRow)
+    ) {
       return {
         success: false,
         message: "Invalid move according to chess rules.",
@@ -314,24 +316,28 @@ class ChessGame {
     }
 
     if (this.gameState !== "UNFINISHED") {
-      return { success: false, message: "Game is already finished." };
+      return {
+        success: false,
+        message: "Game is already finished.",
+      };
     }
 
-    // Make the move
-    this.setPieceAt(currentRow, currentCol, 0);
+    // make the move
+    this.setPieceAt(currentRow, currentCol, 0); // remove piece from current square
     let capturedPiece = this.getPieceAt(destRow, destCol);
 
+    // atomic explosion if capture occurs
     if (capturedPiece !== 0) {
-      // Atomic explosion!
-      this.setPieceAt(destRow, destCol, 0); // Captured piece explodes
+      this.setPieceAt(destRow, destCol, 0); // captured piece explodes
 
-      // Explode adjacent squares (pawns survive)
-      for (let dr = -1; dr <= 1; dr++) {
-        for (let dc = -1; dc <= 1; dc++) {
-          let explodeRow = destRow + dr;
-          let explodeCol = destCol + dc;
+      // explode adjacent squares (except for pawns)
+      for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+        for (let colOffset = -1; colOffset <= 1; colOffset++) {
+          let explodeRow = destRow + rowOffset;
+          let explodeCol = destCol + colOffset;
           let explodePiece = this.getPieceAt(explodeRow, explodeCol);
 
+          // skip pawns and nonexistent squares (explosions on the edge of the board)
           if (
             explodePiece !== null &&
             explodePiece !== this.BP &&
@@ -341,8 +347,9 @@ class ChessGame {
           }
         }
       }
-    } else {
-      // Normal move (no capture)
+    }
+    // normal move (no capture)
+    else {
       this.setPieceAt(destRow, destCol, piece);
     }
 
@@ -352,8 +359,10 @@ class ChessGame {
     return { success: true, message: "Move completed successfully." };
   }
 
+  /**
+   * Checks if either king is missing from the board to determine if the game has ended.
+   */
   checkGameEnd() {
-    // Check if kings are still on the board
     let blackKingExists = false;
     let whiteKingExists = false;
 
@@ -372,18 +381,35 @@ class ChessGame {
     }
   }
 
+  /**
+   * Switches the current player between "WHITE" and "BLACK".
+   */
   switchPlayer() {
     this.currentPlayer = this.currentPlayer === "WHITE" ? "BLACK" : "WHITE";
   }
 
+  /**
+   * Returns the player whose turn it currently is.
+   * @returns {string} The current player's identifier.
+   */
   getCurrentPlayer() {
     return this.currentPlayer;
   }
 
+  /**
+   * Returns the current state of the game.
+   * @returns {string} The current game state: UNFINISHED, WHITE_WON, or BLACK_WON.
+   */
   getGameState() {
     return this.gameState;
   }
 
+  /**
+   * Returns the symbol associated with a given chess piece.
+   *
+   * @param {string} piece - The identifier of the chess piece.
+   * @returns {string} The symbol for the specified piece, or an empty string if not found.
+   */
   getPieceSymbol(piece) {
     return this.pieceSymbols[piece] || "";
   }
