@@ -1,5 +1,9 @@
-// Chess GUI Controller
 class ChessGUI {
+  /**
+   * Creates a new ChessGame instance.
+   * References DOM elements for board, game state, current player, and status messages.
+   * Initializes the board, sets up event listeners, and updates the display.
+   */
   constructor() {
     this.game = new ChessGame();
     this.selectedSquare = null;
@@ -13,18 +17,26 @@ class ChessGUI {
     this.updateDisplay();
   }
 
+  /**
+   * Initializes the chess board by creating and appending square elements to the board container.
+   * Clears any existing squares before rendering a new 8x8 grid.
+   * Each square is assigned its row, column, and chess notation as data attributes,
+   * and is styled as either light or dark based on its position.
+   * Adds a click event listener to each square for handling user interactions.
+   */
   initializeBoard() {
-    this.boardElement.innerHTML = "";
+    this.boardElement.innerHTML = ""; // clear any existing squares
 
+    // create grid of squares
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         const square = document.createElement("div");
         square.className = "square";
         square.dataset.row = row;
         square.dataset.col = col;
-        square.dataset.square = this.coordsToChessNotation(row, col);
+        square.dataset.square = this.coordsToChessNotation(row, col); // turn coordinates into chess notation
 
-        // Determine square color
+        // determine square color
         const isLight = (row + col) % 2 === 0;
         square.classList.add(isLight ? "light" : "dark");
 
@@ -35,13 +47,18 @@ class ChessGUI {
     }
   }
 
+  /**
+   * Sets up event listeners for UI interactions.
+   * Handles "New Game" button click to start a new game.
+   * Manages "Rules" modal open/close via button and overlay click.
+   */
   setupEventListeners() {
-    // New Game button
+    // new game button
     document.getElementById("new-game-btn").addEventListener("click", () => {
       this.newGame();
     });
 
-    // Rules button and modal
+    // rules button and modal
     const rulesBtn = document.getElementById("rules-btn");
     const modal = document.getElementById("rules-modal");
     const closeBtn = modal.querySelector(".close");
@@ -54,22 +71,22 @@ class ChessGUI {
       modal.style.display = "none";
     });
 
+    // click event listener on entire browser
+    // allows closing modal when clicking outside of it
     window.addEventListener("click", (e) => {
       if (e.target === modal) {
         modal.style.display = "none";
       }
     });
-
-    // Keyboard shortcuts
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        this.clearSelection();
-      } else if (e.key === "n" || e.key === "N") {
-        this.newGame();
-      }
-    });
   }
 
+  /**
+   * Converts board coordinates (row, col) to standard chess notation (like "e4").
+   *
+   * @param {number} row - The row index (0-based, with 0 at the top of the board).
+   * @param {number} col - The column index (0-based, with 0 at the leftmost file).
+   * @returns {string} The chess notation corresponding to the given coordinates.
+   */
   coordsToChessNotation(row, col) {
     return String.fromCharCode("a".charCodeAt(0) + col) + (8 - row);
   }
@@ -80,6 +97,15 @@ class ChessGUI {
     return { row, col };
   }
 
+  /**
+   * Handles the click event on a chessboard square.
+   * If the game is finished, displays the winner and prevents further actions.
+   * If no square is selected, selects the clicked square.
+   * If the same square is clicked again, deselects it.
+   * If a different square is clicked, attempts to make a move from the selected square to the clicked square.
+   *
+   * @param {MouseEvent} event - The click event triggered by the user on a chessboard square.
+   */
   handleSquareClick(event) {
     const square = event.target;
     const row = parseInt(square.dataset.row);
@@ -94,26 +120,34 @@ class ChessGUI {
       return;
     }
 
+    // first click, select a piece
     if (this.selectedSquare === null) {
-      // First click - select a piece
       this.selectSquare(row, col, chessNotation);
-    } else {
-      // Second click - make a move or deselect
+    }
+    // second click
+    else {
+      // clicking the same square deselects it
       if (this.selectedSquare === chessNotation) {
-        // Clicking the same square deselects it
         this.clearSelection();
-      } else {
-        // Attempt to make a move
+      }
+      // make a move
+      else {
         this.attemptMove(this.selectedSquare, chessNotation);
       }
     }
   }
 
+  /**
+   * Handles the selection of a square on the chess board.
+   * Validates the selected piece, ensures it belongs to the current player,
+   * highlights the selected square, and displays appropriate messages.
+   *
+   * @param {number} row - The row index of the selected square.
+   * @param {number} col - The column index of the selected square.
+   * @param {string} chessNotation - The chess notation (like "e4") of the selected square.
+   */
   selectSquare(row, col, chessNotation) {
     const piece = this.game.getPieceAt(row, col);
-    console.log(
-      `Selecting square ${chessNotation}, piece: ${piece}, current player: ${this.game.getCurrentPlayer()}`
-    );
 
     if (piece === 0) {
       this.showMessage("Please select a piece to move.", "error");
@@ -127,12 +161,6 @@ class ChessGUI {
 
     this.selectedSquare = chessNotation;
     this.highlightSelectedSquare(chessNotation);
-    this.showMessage(
-      `Selected ${this.game.getPieceSymbol(
-        piece
-      )} on ${chessNotation.toUpperCase()}`,
-      "info"
-    );
   }
 
   attemptMove(fromSquare, toSquare) {
@@ -232,11 +260,17 @@ class ChessGUI {
     }
   }
 
+  /**
+   * Displays a status message in the UI with a specified type.
+   *
+   * @param {string} message - The message to display.
+   * @param {string} [type="info"] - The type of message ("info" (default), "error", "success", etc).
+   */
   showMessage(message, type = "info") {
     this.statusMessageElement.textContent = message;
-    this.statusMessageElement.className = `status-message ${type}`;
+    this.statusMessageElement.className = `status-message ${type}`; // update css class based on type
 
-    // Auto-clear info messages after 3 seconds
+    // clear info messages after 3 seconds
     if (type === "info") {
       setTimeout(() => {
         this.statusMessageElement.textContent = "";
@@ -245,6 +279,10 @@ class ChessGUI {
     }
   }
 
+  /**
+   * Starts a new chess game by initializing the game state, clearing selections and highlights,
+   * updating the display, and showing a message indicating the start of the game.
+   */
   newGame() {
     this.game.initializeGame();
     this.selectedSquare = null;
@@ -254,8 +292,7 @@ class ChessGUI {
   }
 }
 
-// Initialize the game when the page loads
+// initialize the game when the page loads
 document.addEventListener("DOMContentLoaded", () => {
   const chessGUI = new ChessGUI();
-  console.log("Atomic Chess game initialized!");
 });
