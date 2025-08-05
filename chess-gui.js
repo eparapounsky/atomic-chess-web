@@ -91,6 +91,12 @@ class ChessGUI {
     return String.fromCharCode("a".charCodeAt(0) + col) + (8 - row);
   }
 
+  /**
+   * Converts chess board notation to zero-based row and column coordinates.
+   *
+   * @param {string} notation - The chess notation string.
+   * @returns {{row: number, col: number}} An object containing the row and column.
+   */
   chessNotationToCoords(notation) {
     const col = notation.charCodeAt(0) - "a".charCodeAt(0);
     const row = 8 - parseInt(notation[1]);
@@ -140,7 +146,7 @@ class ChessGUI {
   /**
    * Handles the selection of a square on the chess board.
    * Validates the selected piece, ensures it belongs to the current player,
-   * highlights the selected square, and displays appropriate messages.
+   * and highlights the selected square.
    *
    * @param {number} row - The row index of the selected square.
    * @param {number} col - The column index of the selected square.
@@ -191,11 +197,15 @@ class ChessGUI {
     }
   }
 
+  /**
+   * Clears previous highlights and highlights the square specified by chess notation.
+   *
+   * @param {string} chessNotation - The chess notation of the square to highlight.
+   */
   highlightSelectedSquare(chessNotation) {
-    // Clear previous highlights
     this.clearHighlights();
 
-    // Highlight selected square
+    // highlight selected square
     const coords = this.chessNotationToCoords(chessNotation);
     const squareElement = this.getSquareElement(coords.row, coords.col);
     if (squareElement) {
@@ -203,30 +213,54 @@ class ChessGUI {
     }
   }
 
+  /**
+   * Clears the currently selected square and any highlighted squares.
+   */
   clearSelection() {
     this.selectedSquare = null;
     this.clearHighlights();
-    this.showMessage("Selection cleared.", "info");
   }
 
+  /**
+   * Removes all highlight classes ("selected", "valid-move", "invalid-move") from every square on the board.
+   * This clears any visual indicators of selection.
+   */
   clearHighlights() {
     const squares = this.boardElement.querySelectorAll(".square");
+
+    // iterate over all squares and remove highlights
     squares.forEach((square) => {
       square.classList.remove("selected", "valid-move", "invalid-move");
     });
   }
 
+  /**
+   * Returns the DOM element representing the chessboard square at the specified row and column.
+   * Used for accessing and manipulating specific squares in the UI to sync with the game state.
+   *
+   * @param {number} row - The row index of the square.
+   * @param {number} col - The column index of the square.
+   * @returns {Element|null} The DOM element for the specified square, or null if not found.
+   */
   getSquareElement(row, col) {
     return this.boardElement.querySelector(
       `[data-row="${row}"][data-col="${col}"]`
     );
   }
 
+  /**
+   * Updates the chess board and game information display.
+   */
   updateDisplay() {
     this.updateBoard();
     this.updateGameInfo();
   }
 
+/**
+ * Updates the visual representation of the chess board by iterating over each square,
+ * retrieving the piece at each position, and setting the corresponding HTML element's
+ * content to display the piece symbol.
+ */
   updateBoard() {
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
@@ -241,22 +275,25 @@ class ChessGUI {
     }
   }
 
+/**
+ * Updates the game state and current player.
+ */
   updateGameInfo() {
     this.gameStateElement.textContent = this.game.getGameState();
     this.currentPlayerElement.textContent = this.game.getCurrentPlayer();
 
-    // Update colors based on game state
+    // update colors based on game state
     if (this.game.getGameState() !== "UNFINISHED") {
       this.gameStateElement.style.color = "#e74c3c";
     } else {
       this.gameStateElement.style.color = "#2ecc71";
     }
 
-    // Update current player color
+    // update current player color
     if (this.game.getCurrentPlayer() === "WHITE") {
-      this.currentPlayerElement.style.color = "#ecf0f1";
+      this.currentPlayerElement.style.color = "#ffffffff";
     } else {
-      this.currentPlayerElement.style.color = "#95a5a6";
+      this.currentPlayerElement.style.color = "#000000ff";
     }
   }
 
