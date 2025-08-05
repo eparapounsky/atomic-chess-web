@@ -256,7 +256,7 @@ class ChessGame {
 
       // black pawn
       case this.BP:
-        if (currentRow <= destRow) return false; // can't move backwards or sideways
+        if (destRow <= currentRow) return false; // can't move backwards or sideways
         if (destPiece === 0 && currentCol !== destCol) return false; // can't move diagonally without capture
         if (destPiece !== 0 && currentCol === destCol) return false; // can't capture forward
 
@@ -268,7 +268,7 @@ class ChessGame {
 
       // white pawn
       case this.WP:
-        if (currentRow >= destRow) return false;
+        if (destRow >= currentRow) return false;
         if (destPiece === 0 && currentCol !== destCol) return false;
         if (destPiece !== 0 && currentCol === destCol) return false;
 
