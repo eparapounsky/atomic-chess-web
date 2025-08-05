@@ -20,7 +20,7 @@ class ChessGame {
     this.WK = 50; // White King
     this.WP = 60; // White Pawn
 
-    // unicode symbols for gui
+    // dict for unicode symbols for gui
     this.pieceSymbols = {
       0: "", // empty
       1: "♜", // black rook
@@ -44,10 +44,6 @@ class ChessGame {
    * Initializes a new chess game.
    * Sets the current player to WHITE, game state to UNFINISHED,
    * and creates a new board with pieces in their starting positions.
-   *
-   * The board is represented as an 8x8 2D array where:
-   * - 0 represents an empty square
-   * - Constants like WP represent pieces
    */
   initializeGame() {
     this.currentPlayer = "WHITE";
