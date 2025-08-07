@@ -5,14 +5,11 @@ A browser-based implementation of Atomic Chess with interactive gameplay and mod
 See the project [here](https://atomic-chess.up.railway.app/) 
 
 ## Features
-- Atomic Chess rules (exploding captures, king safety, pawn immunity
 - Interactive chessboard with move validation
 - Visual highlights for selection, valid/invalid moves, and game state
 - Status messages and error feedback
 - New game/reset button
 - Modal dialog with rules and instructions
-- Responsive design for desktop and mobile
-- Source code link and author credit in footer
 
 ## Rules
 - Atomic chess follows standard chess rules with one major exception: captures cause explosions
