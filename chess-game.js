@@ -376,14 +376,4 @@ class ChessGame {
       this.gameState = "BLACK_WON";
     }
   }
-
-  /**
-   * Returns the symbol associated with a given chess piece.
-   *
-   * @param {string} piece - The identifier of the chess piece.
-   * @returns {string} The symbol for the specified piece, or an empty string if not found.
-   */
-  getPieceSymbol(piece) {
-    return this.pieceSymbols[piece] || "";
-  }
 }
