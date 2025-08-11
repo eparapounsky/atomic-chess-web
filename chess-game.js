@@ -378,14 +378,6 @@ class ChessGame {
   }
 
   /**
-   * Returns the player whose turn it currently is.
-   * @returns {string} The current player's identifier.
-   */
-  getCurrentPlayer() {
-    return this.currentPlayer;
-  }
-
-  /**
    * Returns the current state of the game.
    * @returns {string} The current game state: UNFINISHED, WHITE_WON, or BLACK_WON.
    */
