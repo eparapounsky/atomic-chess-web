@@ -281,7 +281,7 @@ class ChessGUI {
    */
   updateGameInfo() {
     this.gameStateElement.textContent = this.game.getGameState();
-    this.currentPlayerElement.textContent = this.game.getCurrentPlayer();
+    this.currentPlayerElement.textContent = this.game.currentPlayer;
 
     // update colors based on game state
     if (this.game.getGameState() !== "UNFINISHED") {
@@ -291,7 +291,7 @@ class ChessGUI {
     }
 
     // update current player color
-    if (this.game.getCurrentPlayer() === "WHITE") {
+    if (this.game.currentPlayer === "WHITE") {
       this.currentPlayerElement.style.color = "#ffffffff";
     } else {
       this.currentPlayerElement.style.color = "#000000ff";
