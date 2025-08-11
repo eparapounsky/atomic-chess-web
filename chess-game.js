@@ -350,7 +350,7 @@ class ChessGame {
     }
 
     this.checkGameEnd();
-    this.switchPlayer();
+    this.currentPlayer = this.currentPlayer === "WHITE" ? "BLACK" : "WHITE"; // switch player
 
     return { success: true, message: "Move completed successfully." };
   }
@@ -375,13 +375,6 @@ class ChessGame {
     } else if (!whiteKingExists) {
       this.gameState = "BLACK_WON";
     }
-  }
-
-  /**
-   * Switches the current player between "WHITE" and "BLACK".
-   */
-  switchPlayer() {
-    this.currentPlayer = this.currentPlayer === "WHITE" ? "BLACK" : "WHITE";
   }
 
   /**
