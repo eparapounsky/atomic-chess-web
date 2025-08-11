@@ -118,9 +118,9 @@ class ChessGUI {
     const col = parseInt(square.dataset.col);
     const chessNotation = square.dataset.square;
 
-    if (this.game.getGameState() !== "UNFINISHED") {
+    if (this.game.gameState !== "UNFINISHED") {
       this.showMessage(
-        `Game is finished! Winner: ${this.game.getGameState()}`,
+        `Game is finished! Winner: ${this.game.gameState}`,
         "info"
       );
       return;
@@ -184,10 +184,10 @@ class ChessGUI {
       this.updateDisplay();
 
       // check for game end
-      if (this.game.getGameState() !== "UNFINISHED") {
+      if (this.game.gameState !== "UNFINISHED") {
         setTimeout(() => {
           this.showMessage(
-            `GAME OVER! WINNER: ${this.game.getGameState()}`,
+            `GAME OVER! WINNER: ${this.game.gameState}`,
             "success"
           );
         }, 3000);
@@ -280,11 +280,11 @@ class ChessGUI {
    * Updates the game state and current player.
    */
   updateGameInfo() {
-    this.gameStateElement.textContent = this.game.getGameState();
+    this.gameStateElement.textContent = this.game.gameState;
     this.currentPlayerElement.textContent = this.game.currentPlayer;
 
     // update colors based on game state
-    if (this.game.getGameState() !== "UNFINISHED") {
+    if (this.game.gameState !== "UNFINISHED") {
       this.gameStateElement.style.color = "#e74c3c";
     } else {
       this.gameStateElement.style.color = "#2ecc71";
