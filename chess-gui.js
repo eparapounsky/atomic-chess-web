@@ -266,7 +266,7 @@ class ChessGUI {
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         const piece = this.game.getPieceAt(row, col);
-        const symbol = this.game.getPieceSymbol(piece);
+        const symbol = this.game.pieceSymbols[piece] || ""; // get piece symbol or empty string if no piece
         const squareElement = this.getSquareElement(row, col);
 
         if (squareElement) {
