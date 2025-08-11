@@ -378,14 +378,6 @@ class ChessGame {
   }
 
   /**
-   * Returns the current state of the game.
-   * @returns {string} The current game state: UNFINISHED, WHITE_WON, or BLACK_WON.
-   */
-  getGameState() {
-    return this.gameState;
-  }
-
-  /**
    * Returns the symbol associated with a given chess piece.
    *
    * @param {string} piece - The identifier of the chess piece.
