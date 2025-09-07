@@ -34,7 +34,7 @@ class ChessGUI {
         square.className = "square";
         square.dataset.row = row;
         square.dataset.col = col;
-        square.dataset.square = this.coordsToChessNotation(row, col); // turn coordinates into chess notation
+        square.dataset.square = String.fromCharCode("a".charCodeAt(0) + col) + (8 - row); // turn coordinates into chess notation
 
         // determine square color
         const isLight = (row + col) % 2 === 0;
@@ -78,29 +78,6 @@ class ChessGUI {
         modal.style.display = "none";
       }
     });
-  }
-
-  /**
-   * Converts board coordinates (row, col) to standard chess notation (like "e4").
-   *
-   * @param {number} row - The row index (0-based, with 0 at the top of the board).
-   * @param {number} col - The column index (0-based, with 0 at the leftmost file).
-   * @returns {string} The chess notation corresponding to the given coordinates.
-   */
-  coordsToChessNotation(row, col) {
-    return String.fromCharCode("a".charCodeAt(0) + col) + (8 - row);
-  }
-
-  /**
-   * Converts chess board notation to zero-based row and column coordinates.
-   *
-   * @param {string} notation - The chess notation string.
-   * @returns {{row: number, col: number}} An object containing the row and column.
-   */
-  chessNotationToCoords(notation) {
-    const col = notation.charCodeAt(0) - "a".charCodeAt(0);
-    const row = 8 - parseInt(notation[1]);
-    return { row, col };
   }
 
   /**
@@ -206,8 +183,11 @@ class ChessGUI {
   highlightSelectedSquare(chessNotation) {
     this.clearHighlights();
 
-    // highlight selected square
-    const coords = this.chessNotationToCoords(chessNotation);
+    // convert chess notation to coordinates
+    const col = chessNotation.charCodeAt(0) - "a".charCodeAt(0);
+    const row = 8 - parseInt(chessNotation[1]);
+    const coords = { row, col };
+    // get the corresponding square element
     const squareElement = this.getSquareElement(coords.row, coords.col);
     if (squareElement) {
       squareElement.classList.add("selected");
